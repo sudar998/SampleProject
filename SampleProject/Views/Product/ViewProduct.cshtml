@@ -1,0 +1,30 @@
+﻿@model Product
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<h1>View Products </h1>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Name</th>
+
+            <th> Available Quantity </th>
+
+        </tr>
+    </thead>
+    <tbody>
+
+        <tr>
+
+            <td>@Model.Name</td>
+            <td> @Model.AvailableQuantity</td>
+
+            <td>
+                <a class="btn btn-primary" asp-controller="Product" asp-action="UpdateProduct" asp-route-productId="@Model.Id
+    ">Edit</a>
+            </td>
+        </tr>
+
+    </tbody>
+</table>

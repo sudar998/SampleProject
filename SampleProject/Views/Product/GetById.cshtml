@@ -1,0 +1,12 @@
+﻿@model  Product
+ 
+@{
+    <h2> Result </h2>
+    @if(Model == null)
+    {
+           <p>No product found</p>
+    }else 
+    {
+    <p> @Model.Name </p>
+    } 
+}

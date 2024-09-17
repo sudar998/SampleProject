@@ -1,0 +1,42 @@
+﻿
+@model List<User>
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<h1>Users</h1>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Name</th>
+            
+            <th>Security Number</th>
+
+            
+           
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model)
+        {
+            <tr>
+               
+                <td>@user.Name</td>
+                <td>@user.SecurityNumber</td>
+             
+                <td>
+  @*                   <a class="btn btn-primary" asp-controller="User" asp-action="UpdateUser" asp-route-userId="@user.Id
+">Edit</a> *@
+
+                    <a class="btn btn-primary" asp-controller="User" asp-action="ViewUser" asp-route-userId="@user.Id
+    ">View</a>
+                    <a class="btn btn-primary" asp-controller="User" asp-action="Delete" asp-route-userId="@user.Id
+        ">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+    <a class="btn btn-primary" asp-controller="User" asp-action="Create">
+        Create
+    </a>
+</table>

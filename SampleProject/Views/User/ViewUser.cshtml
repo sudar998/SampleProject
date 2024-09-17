@@ -1,0 +1,36 @@
+﻿@model User
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<h1>View Users</h1>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Name</th>
+
+            <th>Email</th>
+
+            <th>Security Number </th>
+            <th>Email </th>
+            <th>Password </th>
+
+        </tr>
+    </thead>
+    <tbody>
+      
+            <tr>
+
+                <td>@Model.Name</td>
+                <td>@Model.Email</td>
+                <td>@Model.SecurityNumber</td>
+                <td> @Model.Email</td>
+                <td>@Model.Password </td>
+                <td>
+                    <a class="btn btn-primary" asp-controller="User" asp-action="UpdateUser" asp-route-userId="@Model.Id
+    ">Edit</a>
+                </td>
+            </tr>
+        
+    </tbody>
+</table>

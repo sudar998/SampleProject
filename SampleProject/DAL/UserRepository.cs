@@ -1,0 +1,124 @@
+﻿using Microsoft.AspNetCore.Identity;
+using SampleProject.DAL.Constants;
+using SampleProject.DAL.Interface;
+using SampleProject.Models;
+using System.Data.SqlClient;
+
+namespace SampleProject.DAL
+{
+    public class UserRepository : Repository<User>, IUserRepository
+    {
+
+        public UserRepository()
+        {
+
+        }
+        public async Task Create(User user)
+        {
+            if (user == null) throw new ArgumentNullException(nameof(user));
+            _command = new SqlCommand(SqlConstant.InsertUserData, _connection);
+            _command.Parameters.AddWithValue("@Name", user.Name);
+            _command.Parameters.AddWithValue("@SecurityNumber", user.SecurityNumber);
+            _command.Parameters.AddWithValue("@Email" ,user.Email); 
+            _command.Parameters.AddWithValue("@Password" , user.Password);
+            _command.Parameters.AddWithValue("@isDeleted", 0); 
+
+
+            await ExecuteNonQuery(_command);
+
+        }
+
+       
+
+        public async Task<IEnumerable<User>> GetAll()
+        {
+            _command = new SqlCommand(SqlConstant.GetAllUsers, _connection);
+            List<User> userList = new List<User>();
+            var result = ExecuteReader(_command);
+            while (result.Read())
+            {
+                User user = new User()
+                {
+                    Id = result.GetInt32(result.GetOrdinal("Id")),
+                    Name = result.GetString(result.GetOrdinal("Name")), 
+                    Email = result.GetString(result.GetOrdinal("Email")),
+                    SecurityNumber =result.GetInt32(result.GetOrdinal("SecurityNumber"))
+                };
+                userList.Add(user);
+            }
+            result.Close();
+            return userList;
+        }
+
+
+        public async Task<bool> Delete(int id)
+        {
+            if (id == 0) throw new Exception($"Id {id} is not valid");
+            _command = new SqlCommand(SqlConstant.GetUserById, _connection);
+            _command.Parameters.AddWithValue("Id", id);
+
+
+            var response = ExecuteReader(_command);
+
+            if (!response.Read()) return false;
+            response.Close();
+            _command = new SqlCommand(SqlConstant.DeleteUser, _connection);
+            _command.Parameters.AddWithValue("@Id", id);
+            await ExecuteNonQuery(_command);
+            return true;
+
+        }
+        public async Task<User> GetById(int Id)
+        {
+            if (Id == 0) throw new Exception($"ID {Id} is not valid");
+            if (_connection == null)
+            {
+                _connection = new SqlConnection(GetConnectionString());
+                _connection.Open();
+            }
+
+            _command = new SqlCommand(SqlConstant.GetUserById, _connection);
+            _command.Parameters.AddWithValue("@Id", Id);
+            User? user = null;
+            var result = ExecuteReader(_command);
+            if (result.Read())
+            {
+                user = new User()
+                {
+                    Id = result.GetInt32(result.GetOrdinal("Id")),
+                    Name = result.GetString(result.GetOrdinal("Name")),
+                    Email = result.GetString(result.GetOrdinal("Email")),
+                    Password = result.GetString(result.GetOrdinal("Password")),
+                    SecurityNumber =  result.GetInt32(result.GetOrdinal("SecurityNumber")),
+
+                };
+
+            }
+            result.Close();
+            return user!;
+        }
+
+        public async Task<bool> Update(User user, int id)
+        {
+            if (user == null) throw new Exception($"User is not specified"); 
+            if (id == 0) throw new Exception($"Id {id} is not valid");
+            _command = new SqlCommand(SqlConstant.GetUserById, _connection);
+            _command.Parameters.AddWithValue("Id", id);
+
+
+            var response = ExecuteReader(_command);
+
+            if (!response.Read()) return false;
+
+            response.Close();
+            _command = new SqlCommand(SqlConstant.UpdateUser, _connection);
+            _command.Parameters.AddWithValue("@Name", user.Name);
+            _command.Parameters.AddWithValue("@Email", user.Email);
+            _command.Parameters.AddWithValue("@Password", user.Password);
+            _command.Parameters.AddWithValue("@Id", id); 
+            await ExecuteNonQuery(_command);
+
+            return true; 
+        }
+    }
+}

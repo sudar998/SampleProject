@@ -1,0 +1,55 @@
+﻿@model UserProductList
+
+@{
+    ViewBag.Title = "Create";
+}
+
+<h2>Create Orders</h2>
+
+<br/>
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+   
+    <form  onsubmit="var sel=document.getElementById('product');document.getElementById('product_id').value=sel.options[sel.selectedIndex].text;">
+            <div class="col-md-10">
+
+          
+                <select class="form-select" style="width:200px" name="Product" id="Product">
+                <option value="0">
+                    Select Product </option>
+                    @foreach (var product in Model.Products)
+                    {
+
+                    <option value="@product.Id"> @product.Name</option>
+
+
+                    } 
+                    
+                   
+           
+                   
+          
+        </select>
+        
+        <br/>
+        <div >
+
+                <select class="form-select" style="width:200px" name="User" id="User">
+                    <option value="0">Select User</option>
+                    @foreach (var user in Model.Users)
+                    {
+                        <option value="@user.Id"> @user.Name</option>
+
+                    }
+                </select>
+      
+        </div>
+        <br/>
+        <br />
+        <input type="submit" name="submit" />
+    </form>
+   
+    
+}

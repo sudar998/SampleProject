@@ -1,0 +1,43 @@
+﻿@model List<UserProductResponse>
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<h1>Orders</h1>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Users</th>
+
+            <th>Product Purchased </th>
+
+
+
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var userProduct in Model)
+        {
+            <tr>
+
+                <td>@userProduct.User.Name</td>
+                <td>@userProduct.Product.Name</td>
+               
+
+                <td>
+                    @*                   <a class="btn btn-primary" asp-controller="User" asp-action="UpdateUser" asp-route-userId="@user.Id
+                ">Edit</a> *@
+
+          @*           <a class="btn btn-primary" asp-controller="UserProduct" asp-action="ViewUserProduct" asp-route-userId="@user.Id
+        ">View</a> *@
+                    <a class="btn btn-primary" asp-controller="UserProduct" asp-action="Delete" asp-route-userproductId="@userProduct.Id
+
+            ">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+    <a class="btn btn-primary" asp-controller="UserProduct" asp-action="Create">
+        Add Order
+    </a>
+</table>
