@@ -36,20 +36,22 @@ namespace SampleProject.DAL
 
             using (_command = new SqlCommand(SqlConstant.CreateUserTable, _connection))
             {
-
+                _command.CommandType = System.Data.CommandType.StoredProcedure;
                 await ExecuteNonQuery(_command);
 
             }
 
-            using(_command = new SqlCommand(SqlConstant.CreateProductTable, _connection))
+            using (_command = new SqlCommand(SqlConstant.CreateProductTable, _connection))
             {
-                   await ExecuteNonQuery(_command); 
+                _command.CommandType = System.Data.CommandType.StoredProcedure;
+                await ExecuteNonQuery(_command);
             }
-            using (_command = new SqlCommand(SqlConstant.CreateUserProductTable , _connection))
+            using (_command = new SqlCommand(SqlConstant.CreateUserProductTable, _connection))
             {
-                  await ExecuteNonQuery(_command);  
+                _command.CommandType = System.Data.CommandType.StoredProcedure;
+                await ExecuteNonQuery(_command);
             }
-             
+
 
         }
 
@@ -57,15 +59,15 @@ namespace SampleProject.DAL
         {
             try
             {
-                if(_connection == null) _connection= new SqlConnection(GetConnectionString());  
+                if (_connection == null) _connection = new SqlConnection(GetConnectionString());
                 if (_connection.State == System.Data.ConnectionState.Closed)
                 {
                     _connection.Open();
                 }
-               
+
                 var reader = _command.ExecuteReader();
                 _connection = null;
-                
+
 
                 return reader;
             }

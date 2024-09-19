@@ -5,12 +5,13 @@ using System.Data.SqlClient;
 
 namespace SampleProject.DAL
 {
-    public class ProductRepository :  Repository<Product>,  IProductRepository
+    public class ProductRepository : Repository<Product>, IProductRepository
     {
         public async Task Create(Product product)
         {
             if (product == null) throw new ArgumentNullException(nameof(product));
-            _command = new SqlCommand(SqlConstant.InserProductData, _connection);
+            _command = new SqlCommand(SqlConstant.InsertProductData, _connection);
+            _command.CommandType = System.Data.CommandType.StoredProcedure;
             _command.Parameters.AddWithValue("@Name", product.Name);
             _command.Parameters.AddWithValue("@AvailableQuantity", product.AvailableQuantity);
             _command.Parameters.AddWithValue("@isDeleted", 0);
@@ -23,6 +24,7 @@ namespace SampleProject.DAL
         public async Task<IEnumerable<Product>> GetAll()
         {
             _command = new SqlCommand(SqlConstant.GetAllProducts, _connection);
+            _command.CommandType = System.Data.CommandType.StoredProcedure;
             List<Product> productList = new List<Product>();
             var result = ExecuteReader(_command);
             while (result.Read())
@@ -37,16 +39,17 @@ namespace SampleProject.DAL
                 productList.Add(product);
             }
 
-            result.Close(); 
+            result.Close();
             return productList;
         }
 
-  
+
 
         public async Task<bool> Delete(int id)
         {
             if (id == 0) throw new Exception($"Id {id} is not valid");
             _command = new SqlCommand(SqlConstant.GetProductById, _connection);
+            _command.CommandType = System.Data.CommandType.StoredProcedure;
             _command.Parameters.AddWithValue("Id", id);
 
 
@@ -55,8 +58,9 @@ namespace SampleProject.DAL
 
 
             if (!response.Read()) return false;
-            response.Close(); 
+            response.Close();
             _command = new SqlCommand(SqlConstant.DeleteProduct, _connection);
+            _command.CommandType = System.Data.CommandType.StoredProcedure;
             _command.Parameters.AddWithValue("@Id", id);
             await ExecuteNonQuery(_command);
             return true;
@@ -66,12 +70,13 @@ namespace SampleProject.DAL
         {
             if (Id == 0) throw new Exception($"ID {Id} is not valid");
 
-           if(_connection == null)
+            if (_connection == null)
             {
                 _connection = new SqlConnection(GetConnectionString());
-                _connection.Open(); 
+                _connection.Open();
             }
             _command = new SqlCommand(SqlConstant.GetProductById, _connection);
+            _command.CommandType = System.Data.CommandType.StoredProcedure;
             _command.Parameters.AddWithValue("@Id", Id);
             Product? product = null;
             var result = ExecuteReader(_command);
@@ -79,13 +84,13 @@ namespace SampleProject.DAL
             {
                 product = new Product()
                 {
-                    Id= result.GetInt32(result.GetOrdinal("Id")),
-                    Name = result.GetString(result.GetOrdinal("Name")),
-                    AvailableQuantity = result.GetInt32(result.GetOrdinal("AvailableQuantity"))
+                    Id = Convert.ToInt32(result["Id"]),
+                    Name = result["Name"].ToString(),
+                    AvailableQuantity = Convert.ToInt32(result["AvailableQuantity"])
                 };
 
             }
-            result.Close(); 
+            result.Close();
             return product!;
         }
 
@@ -94,6 +99,7 @@ namespace SampleProject.DAL
             if (product == null) throw new Exception($"Product is not specified");
             if (id == 0) throw new Exception($"Id {id} is not valid");
             _command = new SqlCommand(SqlConstant.GetProductById, _connection);
+            _command.CommandType = System.Data.CommandType.StoredProcedure;
             _command.Parameters.AddWithValue("Id", id);
 
 
@@ -103,8 +109,9 @@ namespace SampleProject.DAL
 
             response.Close();
             _command = new SqlCommand(SqlConstant.UpdateProduct, _connection);
+            _command.CommandType = System.Data.CommandType.StoredProcedure;
             _command.Parameters.AddWithValue("@Name", product.Name);
-            _command.Parameters.AddWithValue("@AvailableQuantity" , product.AvailableQuantity);
+            _command.Parameters.AddWithValue("@AvailableQuantity", product.AvailableQuantity);
             _command.Parameters.AddWithValue("@Id", id);
             await ExecuteNonQuery(_command);
 

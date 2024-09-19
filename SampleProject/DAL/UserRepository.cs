@@ -17,6 +17,7 @@ namespace SampleProject.DAL
         {
             if (user == null) throw new ArgumentNullException(nameof(user));
             _command = new SqlCommand(SqlConstant.InsertUserData, _connection);
+            _command.CommandType = System.Data.CommandType.StoredProcedure;
             _command.Parameters.AddWithValue("@Name", user.Name);
             _command.Parameters.AddWithValue("@SecurityNumber", user.SecurityNumber);
             _command.Parameters.AddWithValue("@Email" ,user.Email); 
@@ -33,16 +34,17 @@ namespace SampleProject.DAL
         public async Task<IEnumerable<User>> GetAll()
         {
             _command = new SqlCommand(SqlConstant.GetAllUsers, _connection);
+            _command.CommandType = System.Data.CommandType.StoredProcedure;
             List<User> userList = new List<User>();
             var result = ExecuteReader(_command);
             while (result.Read())
             {
                 User user = new User()
                 {
-                    Id = result.GetInt32(result.GetOrdinal("Id")),
-                    Name = result.GetString(result.GetOrdinal("Name")), 
-                    Email = result.GetString(result.GetOrdinal("Email")),
-                    SecurityNumber =result.GetInt32(result.GetOrdinal("SecurityNumber"))
+                    Id =  Convert.ToInt32( result["Id"]),
+                    Name = result["Name"].ToString(), 
+                    Email =  result["Email"].ToString(),
+                    SecurityNumber =Convert.ToInt32( result["SecurityNumber"]),
                 };
                 userList.Add(user);
             }
@@ -55,6 +57,7 @@ namespace SampleProject.DAL
         {
             if (id == 0) throw new Exception($"Id {id} is not valid");
             _command = new SqlCommand(SqlConstant.GetUserById, _connection);
+            _command.CommandType = System.Data.CommandType.StoredProcedure;
             _command.Parameters.AddWithValue("Id", id);
 
 
@@ -63,6 +66,7 @@ namespace SampleProject.DAL
             if (!response.Read()) return false;
             response.Close();
             _command = new SqlCommand(SqlConstant.DeleteUser, _connection);
+            _command.CommandType = System.Data.CommandType.StoredProcedure;
             _command.Parameters.AddWithValue("@Id", id);
             await ExecuteNonQuery(_command);
             return true;
@@ -78,6 +82,7 @@ namespace SampleProject.DAL
             }
 
             _command = new SqlCommand(SqlConstant.GetUserById, _connection);
+            _command.CommandType = System.Data.CommandType.StoredProcedure;
             _command.Parameters.AddWithValue("@Id", Id);
             User? user = null;
             var result = ExecuteReader(_command);
@@ -85,11 +90,11 @@ namespace SampleProject.DAL
             {
                 user = new User()
                 {
-                    Id = result.GetInt32(result.GetOrdinal("Id")),
-                    Name = result.GetString(result.GetOrdinal("Name")),
-                    Email = result.GetString(result.GetOrdinal("Email")),
-                    Password = result.GetString(result.GetOrdinal("Password")),
-                    SecurityNumber =  result.GetInt32(result.GetOrdinal("SecurityNumber")),
+                    Id = Convert.ToInt32(result["Id"]),
+                    Name = result["Name"].ToString() ,
+                    Email= result["Email"].ToString(),
+                    Password = result["Password"].ToString(),
+                    SecurityNumber = Convert.ToInt32( result["SecurityNumber"]),
 
                 };
 
@@ -103,6 +108,7 @@ namespace SampleProject.DAL
             if (user == null) throw new Exception($"User is not specified"); 
             if (id == 0) throw new Exception($"Id {id} is not valid");
             _command = new SqlCommand(SqlConstant.GetUserById, _connection);
+            _command.CommandType = System.Data.CommandType.StoredProcedure;
             _command.Parameters.AddWithValue("Id", id);
 
 
@@ -112,6 +118,7 @@ namespace SampleProject.DAL
 
             response.Close();
             _command = new SqlCommand(SqlConstant.UpdateUser, _connection);
+            _command.CommandType = System.Data.CommandType.StoredProcedure;
             _command.Parameters.AddWithValue("@Name", user.Name);
             _command.Parameters.AddWithValue("@Email", user.Email);
             _command.Parameters.AddWithValue("@Password", user.Password);

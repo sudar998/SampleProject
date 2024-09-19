@@ -34,12 +34,12 @@ namespace SampleProject.DAL
         public async Task<IEnumerable<UserProductResponse>> GetAll()
         {
 
-            List<UserProductResponse> userList = new List<UserProductResponse>();
+            List<UserProductResponse> userProductList = new List<UserProductResponse>();
             _connection.Open();
-            using (_command = new SqlCommand(SqlConstant.GetAllUserProducts, _connection))
+            using (_command = new SqlCommand(SqlConstant.GetAllUserProduct, _connection))
             {
 
-
+                _command.CommandType = System.Data.CommandType.StoredProcedure;
 
                 var result = ExecuteReader(_command);
 
@@ -54,13 +54,13 @@ namespace SampleProject.DAL
                         Product = await productRepository.GetById(result.GetInt32(result.GetOrdinal("ProductId")))
 
                     };
-                    userList.Add(userProduct);
+                    userProductList.Add(userProduct);
                 }
 
                 //result.Close();
                 _command.Connection.Close();
             }
-            return userList;
+            return userProductList;
         }
     }
 
