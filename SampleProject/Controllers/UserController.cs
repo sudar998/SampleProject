@@ -1,7 +1,9 @@
 ﻿using Azure.Core;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using SampleProject.DAL.Interface;
 using SampleProject.Models;
+using SampleProject.Models.Utils;
 
 namespace SampleProject.Controllers
 {
@@ -22,9 +24,53 @@ namespace SampleProject.Controllers
         }
 
 
+        public async Task Login(User user)
+        {
+
+        }
+
+        public ActionResult Register()
+        {
+            return View(); 
+        }
+
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> Register(UserRegister register)
+        {
+
+            if(register == null)
+            {
+                return BadRequest();
+            }
+
+           var user =  ( await _userRepository.GetAll()).
+                FirstOrDefault(x=>x.SecurityNumber == register.SecurityNumber);
+
+            if (user != null)
+            {
+                ModelState.AddModelError("", $"User with securityNumber {register.SecurityNumber} alread exist");
+                return View(); 
+            }
+            string salt;
+            PasswordUtils.HashPassword(register.password , out salt);
+
+            await _userRepository.Create(
+                new Models.User()
+                {
+                    Email = register.Email,
+                    Name = register.Name,
+                    Password = register.password,
+
+                }
+            );
+            return RedirectToAction("Index");
+        }
         public async Task<IActionResult> Create()
         {
-          
+
             return View();
         }
 
@@ -34,13 +80,13 @@ namespace SampleProject.Controllers
         public async Task<IActionResult> Create(User user)
         {
 
-            if (user == null) return BadRequest(); 
-              if(ModelState.IsValid)
+            if (user == null) return BadRequest();
+            if (ModelState.IsValid)
             {
                 await _userRepository.Create(user);
-                return Redirect("Index"); 
+                return Redirect("Index");
             }
-            return View(user); 
+            return View(user);
         }
 
         public async Task<IActionResult> Index()
@@ -53,7 +99,7 @@ namespace SampleProject.Controllers
         public async Task<IActionResult> ViewUser(int userId)
         {
             var response = await _userRepository.GetById(userId);
-            return View(response); 
+            return View(response);
         }
 
         public async Task<IActionResult> Delete(int userId)
@@ -63,20 +109,20 @@ namespace SampleProject.Controllers
 
         }
 
-        [HttpPost , ActionName("Delete")]
+        [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int userId)
         {
             await _userRepository.Delete(userId);
             return RedirectToAction("Index");
-            
+
         }
 
         public async Task<IActionResult> UpdateUser(int? userId)
         {
 
-            var response=  await _userRepository.GetById(userId.Value);
-           // var response = await _userRepository.Update(new Models.User() { SecurityNumber = securityNumber, Name = name }, id);
+            var response = await _userRepository.GetById(userId.Value);
+            // var response = await _userRepository.Update(new Models.User() { SecurityNumber = securityNumber, Name = name }, id);
             return View(response);
         }
 
@@ -84,14 +130,14 @@ namespace SampleProject.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdateUser(User user)
         {
-               if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
-              var response=  await   _userRepository.Update(user , user.Id);
-                if(response)
+                var response = await _userRepository.Update(user, user.Id);
+                if (response)
                 {
-                  return  RedirectToAction("Index"); 
+                    return RedirectToAction("Index");
                 }
-               
+
             }
             return View(user);
         }

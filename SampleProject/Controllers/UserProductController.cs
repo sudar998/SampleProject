@@ -33,13 +33,7 @@ namespace SampleProject.Controllers
 
 
 
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-
-        //public async Task<IActionResult> Create(int )
-        //{
-
-        //}
+     
         //public async Task<IActionResult> AddOrder(int userId, int productId)
         //{
         //    //get user by id
