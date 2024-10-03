@@ -1,0 +1,40 @@
+﻿@model UserLogin
+
+@{
+    ViewBag.Title = "Login";
+}
+
+<h2>Login</h2>
+
+@using (Html.BeginForm("Login", "Account", FormMethod.Post))
+
+{
+    @Html.AntiForgeryToken()
+
+    @if (TempData["ErrorMessage"] != null)
+
+    {
+        <div class="alert alert-danger">
+            @TempData["ErrorMessage"]
+        </div>
+    }
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.SecurityNumber)
+        @Html.TextBoxFor(m => m.SecurityNumber, new { @class = "form-control", style = "width: 300px;" })
+        @Html.ValidationMessageFor(m => m.SecurityNumber, "", new { @class = "form-control", style = "width: 300px;" })
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.Password)
+        @Html.PasswordFor(m => m.Password, new { @class = "form-control", style = "width: 300px;" })
+        @Html.ValidationMessageFor(m => m.Password, "", new { @class = "form-control", style = "width: 300px;" })
+    </div>
+
+    <button type="submit" class="btn btn-primary">Login</button>
+}
+
+<div>
+    <a href="@Url.Action("Register", "Account")">Don't have an account? Register here</a>
+</div>
+

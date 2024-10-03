@@ -1,0 +1,52 @@
+﻿@model UserRegister
+
+@{
+    ViewBag.Title = "Register";
+}
+
+<h2>Register</h2>
+
+@if (TempData["UserExist"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["UserExist"]
+    </div>
+}
+
+@using (Html.BeginForm("Register", "Account", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+  
+    <div class="form-group">
+        @Html.LabelFor(m => m.Name)
+        @Html.TextBoxFor(m => m.Name, new { @class = "form-control", style = "width: 300px;" })
+        @Html.ValidationMessageFor(m => m.Name, "", new { @class = "form-control", style = "width: 300px;" })
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.SecurityNumber)
+        @Html.TextBoxFor(m => m.SecurityNumber, new { @class = "form-control", style = "width: 300px;" })
+        @Html.ValidationMessageFor(m => m.SecurityNumber, "", new { @class = "form-control", style = "width: 300px;" })
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.Email)
+        @Html.TextBoxFor(m => m.Email, new { @class = "form-control", style = "width: 300px;" })
+        @Html.ValidationMessageFor(m => m.Email, "", new { @class = "form-control", style = "width: 300px;" })
+    </div>
+
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.password, "Password")
+        @Html.PasswordFor(m => m.password, new { @class = "form-control", style = "width: 300px;" })
+        @Html.ValidationMessageFor(m => m.password, "", new { @class = "form-control", style = "width: 300px;" })
+    </div>
+
+    <br />
+    <button type="submit" class="btn btn-primary">Register</button>
+}
+
+<div>
+    <br />
+    <a href="@Url.Action("Login", "Account")">Already have an account? Login here</a>
+</div>

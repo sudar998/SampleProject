@@ -1,0 +1,61 @@
+﻿
+@model EncryptionModel
+
+@{
+    ViewBag.Title = "3DES Encryption Example";
+}
+
+<h2>3DES Encryption Example</h2>
+
+@using (Html.BeginForm("Encrypt", "Encryption", FormMethod.Post))
+{
+    <div>
+        <label>Text to Encrypt:</label>
+        @Html.TextBoxFor(m => m.TextToEncrypt)
+    </div>
+    <div>
+        <label>Key (24 characters):</label>
+        @Html.TextBoxFor(m => m.Key)
+    </div>
+    <div>
+        <input type="submit" value="Encrypt" />
+    </div>
+}
+
+@if (!string.IsNullOrEmpty(Model.EncryptedText))
+{
+    <div>
+        <h4>Encrypted Text:</h4>
+        <p>@Model.EncryptedText</p>
+    </div>
+}
+
+@using (Html.BeginForm("Decrypt", "Encryption", FormMethod.Post))
+{
+    <div>
+        <label>Encrypted Text:</label>
+        @Html.TextBoxFor(m => m.EncryptedText)
+    </div>
+    <div>
+        <label>Key (24 characters):</label>
+        @Html.TextBoxFor(m => m.Key)
+    </div>
+    <div>
+        <input type="submit" value="Decrypt" />
+    </div>
+}
+
+@if (!string.IsNullOrEmpty(Model.DecryptedText))
+{
+    <div>
+        <h4>Decrypted Text:</h4>
+        <p>@Model.DecryptedText</p>
+    </div>
+}
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div style="color: red;">
+        @Html.ValidationSummary()
+    </div>
+}
