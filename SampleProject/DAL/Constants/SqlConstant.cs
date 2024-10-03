@@ -28,6 +28,7 @@ namespace SampleProject.DAL.Constants
         public const string GetAllProducts = "SelectAllProducts";
 
         public const string GetUserById = "GetUserById";
+        public const string GetUserBySecurityNumber = "GetUserBySecurityNumber";
 
 
         public const string GetProductById = "GetProductById";

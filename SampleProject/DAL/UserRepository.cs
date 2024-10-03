@@ -22,7 +22,8 @@ namespace SampleProject.DAL
             _command.Parameters.AddWithValue("@SecurityNumber", user.SecurityNumber);
             _command.Parameters.AddWithValue("@Email" ,user.Email); 
             _command.Parameters.AddWithValue("@Password" , user.Password);
-            _command.Parameters.AddWithValue("@isDeleted", 0); 
+            _command.Parameters.AddWithValue("@isDeleted", 0);
+            _command.Parameters.AddWithValue("@Salt", user.Salt);
 
 
             await ExecuteNonQuery(_command);
@@ -72,6 +73,38 @@ namespace SampleProject.DAL
             return true;
 
         }
+        public async Task<User> GetBySecurityNumber(int securityNumber)
+        {
+            if (securityNumber == 0) throw new Exception($"Security Number {securityNumber} is not valid");
+            if (_connection == null)
+            {
+                _connection = new SqlConnection(GetConnectionString());
+                _connection.Open();
+            }
+
+            _command = new SqlCommand(SqlConstant.GetUserBySecurityNumber, _connection);
+            _command.CommandType = System.Data.CommandType.StoredProcedure;
+            _command.Parameters.AddWithValue("@SecurityNumber", securityNumber);
+            User? user = null;
+            var result = ExecuteReader(_command);
+            if (result.Read())
+            {
+                user = new User()
+                {
+                    Id = Convert.ToInt32(result["Id"]),
+                    Name = result["Name"].ToString(),
+                    Email = result["Email"].ToString(),
+                    Password = result["Password"].ToString(),
+                    Salt = result["Salt"].ToString(),
+                    SecurityNumber = Convert.ToInt32(result["SecurityNumber"]),
+
+                };
+
+            }
+            result.Close();
+            return user!;
+        }
+
         public async Task<User> GetById(int Id)
         {
             if (Id == 0) throw new Exception($"ID {Id} is not valid");
@@ -91,10 +124,10 @@ namespace SampleProject.DAL
                 user = new User()
                 {
                     Id = Convert.ToInt32(result["Id"]),
-                    Name = result["Name"].ToString() ,
-                    Email= result["Email"].ToString(),
+                    Name = result["Name"].ToString(),
+                    Email = result["Email"].ToString(),
                     Password = result["Password"].ToString(),
-                    SecurityNumber = Convert.ToInt32( result["SecurityNumber"]),
+                    SecurityNumber = Convert.ToInt32(result["SecurityNumber"]),
 
                 };
 
@@ -127,5 +160,8 @@ namespace SampleProject.DAL
 
             return true; 
         }
+
+
+        
     }
 }

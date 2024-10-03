@@ -9,6 +9,8 @@ namespace SampleProject.DAL.Interface
 
         Task<User> GetById(int Id);
 
+        Task<User> GetBySecurityNumber(int  securityNumber);    
+
         Task Create(User user);
 
         Task<bool> Update(User user , int id);
