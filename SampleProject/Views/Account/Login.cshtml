@@ -11,6 +11,16 @@
 {
     @Html.AntiForgeryToken()
 
+    @if (TempData["UserNotExist"] != null)
+
+
+
+    {
+        <div class="alert alert-danger">
+            @TempData["UserNotExist"]
+        </div>
+    }
+
     @if (TempData["ErrorMessage"] != null)
 
     {
@@ -19,8 +29,9 @@
         </div>
     }
 
+
     <div class="form-group">
-        @Html.LabelFor(m => m.SecurityNumber)
+        @Html.LabelFor(m => m.SecurityNumber , "Security Number")
         @Html.TextBoxFor(m => m.SecurityNumber, new { @class = "form-control", style = "width: 300px;" })
         @Html.ValidationMessageFor(m => m.SecurityNumber, "", new { @class = "form-control", style = "width: 300px;" })
     </div>
@@ -31,6 +42,7 @@
         @Html.ValidationMessageFor(m => m.Password, "", new { @class = "form-control", style = "width: 300px;" })
     </div>
 
+    <br />
     <button type="submit" class="btn btn-primary">Login</button>
 }
 

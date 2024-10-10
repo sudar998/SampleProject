@@ -1,21 +1,20 @@
-﻿
-@model EncryptionModel
+﻿@model EncryptionModel
 
 @{
-    ViewBag.Title = "3DES Encryption Example";
+    ViewBag.Title = "DES Encryption Example";
 }
 
-<h2>3DES Encryption</h2>
+<h2> DES Encryption</h2>
 
 
-@if  ( !string.IsNullOrEmpty(Model.Key) &&  TempData["EmptyTextToEncrypt"] != null)
+@if (!string.IsNullOrEmpty(Model.Key) && TempData["EmptyTextToEncrypt"] != null)
 {
     <div class="alert alert-danger">
         @TempData["EmptyTextToEncrypt"]
     </div>
 }
 
-@if (!string.IsNullOrEmpty(Model.Key) &&  TempData["EmptyEncryptedText"] != null)
+@if (!string.IsNullOrEmpty(Model.Key) && TempData["EmptyEncryptedText"] != null)
 {
     <div class="alert alert-danger">
         @TempData["EmptyEncryptedText"]
@@ -23,22 +22,30 @@
 }
 
 
-@using (Html.BeginForm("Encrypt", "Encryption", FormMethod.Post))
+@using (Html.BeginForm("DesEncryption", "Encryption", FormMethod.Post))
 {
     <div>
-        
+
         <label>Text to Encrypt:</label>
         @Html.TextBoxFor(m => m.TextToEncrypt)
     </div>
     <div>
-        <label>Key (24 characters):</label>
+        <label>Key (8 characters):</label>
         @Html.TextBoxFor(m => m.Key)
-        </div>
+    </div>
     <div>
-        <br/>
+        <label>Key (8 characters):</label>
+        @Html.TextBoxFor(m => m.Key2)
+    </div>
+    <div>
+        <label>Key (8 characters):</label>
+        @Html.TextBoxFor(m => m.Key3)
+    </div>
+    <div>
+        <br />
         <input class="btn btn-primary" type="submit" value="Encrypt" />
     </div>
-    <br/>
+    <br />
 }
 
 @* @if (!string.IsNullOrEmpty(Model.EncryptedText))
@@ -49,7 +56,7 @@
     </div>
 } *@
 
-@using (Html.BeginForm("Decrypt", "Encryption", FormMethod.Post))
+@using (Html.BeginForm("DesDecryption", "Encryption", FormMethod.Post))
 {
     <div>
         @Html.HiddenFor(m => m.TextToEncrypt)
@@ -59,8 +66,16 @@
         @Html.TextBoxFor(m => m.EncryptedText)
     </div>
     <div>
-        <label>Key (24 characters):</label>
-        @Html.TextBoxFor( m => m.Key)
+        <label>Key (8 characters):</label>
+        @Html.TextBoxFor(m => m.Key)
+    </div>
+    <div>
+        <label>Key (8 characters):</label>
+        @Html.TextBoxFor(m => m.Key2)
+    </div>
+    <div>
+        <label>Key (8 characters):</label>
+        @Html.TextBoxFor(m => m.Key3)
     </div>
     <div>
         <br />
@@ -70,13 +85,14 @@
 
 @if (!string.IsNullOrEmpty(Model.DecryptedText))
 {
-    <br /> 
+    <br />
     <div>
         <h4>Decrypted Text:</h4>
-        <p style="color:darkblue; background-color:lightgreen; width:fit-content">@Model.DecryptedText</p>
+        <p style="color:darkblue; background-color:lightgreen; width:fit-content"> @Model.DecryptedText</p>
+       
     </div>
 }
-@* 
+@*
 @if (!ViewData.ModelState.IsValid)
 {
     <div style="color: red;">

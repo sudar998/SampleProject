@@ -46,7 +46,7 @@ namespace SampleProject.Controllers
             if (user != null)
             {
                 ModelState.AddModelError("", $"User with securityNumber {register.SecurityNumber} alread exist");
-                TempData["UserExist"] = $"User with security Number {register.SecurityNumber} already exist "; 
+                TempData["UserExist"] = $"*User with Security Number {register.SecurityNumber} already exist "; 
                 return View("Register");
             }
             string salt;
@@ -80,8 +80,11 @@ namespace SampleProject.Controllers
             }
             var userResponse = await _userRepository.GetBySecurityNumber(userLogin.SecurityNumber);
 
-            if (userResponse == null) return NotFound(); 
-
+            if (userResponse == null)
+            {
+                TempData["UserNotExist"] = "*User not Exist";
+                return View("Login");
+            }
             var response=  PasswordUtils.VerifyPassword(userResponse.Salt, userResponse.Password, userLogin.Password);
 
             if(response)

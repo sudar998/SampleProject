@@ -36,38 +36,38 @@ namespace SampleProject.Controllers
 
 
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Register(UserRegister register)
-        {
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public async Task<ActionResult> Register(UserRegister register)
+        //{
 
-            if(register == null)
-            {
-                return BadRequest();
-            }
+        //    if(register == null)
+        //    {
+        //        return BadRequest();
+        //    }
 
-           var user =  ( await _userRepository.GetAll()).
-                FirstOrDefault(x=>x.SecurityNumber == register.SecurityNumber);
+        //   var user =  ( await _userRepository.GetAll()).
+        //        FirstOrDefault(x=>x.SecurityNumber == register.SecurityNumber);
 
-            if (user != null)
-            {
-                ModelState.AddModelError("", $"User with securityNumber {register.SecurityNumber} alread exist");
-                return View(); 
-            }
-            string salt;
-            PasswordUtils.HashPassword(register.password , out salt);
+        //    if (user != null)
+        //    {
+        //        ModelState.AddModelError("", $"User with Security Number {register.SecurityNumber} already exist");
+        //        return View(); 
+        //    }
+        //    string salt;
+        //    PasswordUtils.HashPassword(register.password , out salt);
 
-            await _userRepository.Create(
-                new Models.User()
-                {
-                    Email = register.Email,
-                    Name = register.Name,
-                    Password = register.password,
+        //    await _userRepository.Create(
+        //        new Models.User()
+        //        {
+        //            Email = register.Email,
+        //            Name = register.Name,
+        //            Password = register.password,
 
-                }
-            );
-            return RedirectToAction("Index");
-        }
+        //        }
+        //    );
+        //    return RedirectToAction("Index");
+        //}
         public async Task<IActionResult> Create()
         {
 
