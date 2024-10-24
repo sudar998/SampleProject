@@ -84,7 +84,7 @@ namespace SampleProject.DAL
 
         public static byte[] EncryptMessage(string message, string key)
         {
-            using (RSACryptoServiceProvider rsa = new RSACryptoServiceProvider(2048))
+            using (RSACng rsa = new RSACng(2048))
             {
 
 
@@ -93,7 +93,7 @@ namespace SampleProject.DAL
                 rsa.FromXmlString(key);
                 //  File.WriteAllText(@"C:\Users\adark\source\repos\encryptedText\publickey.xml" , rsa.ToXmlString())
                 byte[] messageBytes = Encoding.UTF8.GetBytes(message);
-                byte[] encryptedBytes = rsa.Encrypt(messageBytes, padding:RSAEncryptionPadding.Pkcs1);
+                byte[] encryptedBytes = rsa.Encrypt(messageBytes, padding:RSAEncryptionPadding.OaepSHA256);
 
                 // rsa.Encrypt(encryptedBytes, RSAEncryptionPadding.o);
                 return encryptedBytes;
@@ -102,13 +102,13 @@ namespace SampleProject.DAL
 
         public static string DecryptMessage(byte[] encryptedMessage, string privateKey)
         {
-            using (RSACryptoServiceProvider rsa = new RSACryptoServiceProvider(2048))
+            using (RSACng rsa = new RSACng(2048))
             {
                 try
                 {
                     rsa.FromXmlString(privateKey);
                     // byte[] decryptedBytes = rsa.Decrypt(encryptedMessage, false);
-                    byte[] decryptedBytes=  rsa.Decrypt(encryptedMessage, padding: RSAEncryptionPadding.Pkcs1); 
+                    byte[] decryptedBytes=  rsa.Decrypt(encryptedMessage, padding: RSAEncryptionPadding.OaepSHA256); 
                     return Encoding.UTF8.GetString(decryptedBytes);
 
 
