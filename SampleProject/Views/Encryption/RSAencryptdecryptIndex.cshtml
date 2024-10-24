@@ -1,0 +1,132 @@
+﻿@model RSAModel
+
+
+@if (TempData["SubmitPublicKeyFromClientsuccess"] != null)
+{
+<div class="alert alert-success">
+    @TempData["SubmitPublicKeyFromClientsuccess"]
+</div>
+}
+
+
+@using (Html.BeginForm("RsaEncrypt", "Encryption", FormMethod.Post))
+{
+<div>
+    <h2> Client 1</h2>
+    <label>Text to Encrypt:</label>
+    @Html.TextBoxFor(m => m.RSAencryption.Text)
+</div>
+<div>
+    <label>Key(Public/Private):</label>
+    @Html.TextBoxFor(m => m.RSAencryption.PublicKey)
+</div>
+<div>
+    <br />
+    <input type="hidden" name="client" value="client1" />
+    <input class="btn btn-primary" type="submit" value="Encrypt" />
+</div>
+<br />
+}
+
+@using (Html.BeginForm(FormMethod.Post))
+{
+
+<div style="text-align:left; height:initial">
+    <div>
+
+        <h4>Decrypt</h4>
+        @*  @Html.TextBoxFor(m => m.RSAdecryption.TextToDecrypt) *@
+    </div>
+
+    @*  <div>
+            <label>Key(Public/Private):</label>
+            @Html.TextBoxFor(m => m.RSAdecryption.privateKey)
+        </div> *@
+    <input type="hidden" name="client" value="client1" />
+    <input class="btn btn-primary" type="submit" asp-controller="Encryption" asp-action="RsaDecrypt" value="Decrypt" />
+    <input class="btn btn-info" type="submit" asp-controller="Encryption" asp-action="SubmitPublicKeyFromClient1" value="Submit Key" />
+</div>
+
+
+@*@if(Model.RSAdecryption!= null)
+{
+ if(!string.IsNullOrWhiteSpace(Model.RSAdecryption.DecryptedText ) && string.IsNullOrWhiteSpace(Model.client=="client2" ) )
+{
+<div style="text-align:right; height:auto">
+    <h4> Encrypted Text : </h4>
+    <p style="color:darkblue; text-align:right;width:auto"> @Model.RSAdecryption.EncryptedText</p>
+    <h4>Decrypted Text:</h4>
+    <p style="color:darkblue; text-align:right;width:auto"> @Model.RSAdecryption.DecryptedText</p>
+
+</div>*@
+
+}
+
+
+
+ </div>
+
+
+
+
+<div style="position : absolute; top:50px;right:20px;padding:30px ">
+    @using (Html.BeginForm(FormMethod.Post))
+{
+
+    <div style="text-align:right">
+        <h2> Client 2 </h2>
+        <div>
+
+            <label>Text to Encrypt:</label>
+            @Html.TextBoxFor(m => m.RSAencryption.Text)
+        </div>
+        <div>
+            <label>Key(Public/Private):</label>
+            @Html.TextBoxFor(m => m.RSAencryption.PublicKey)
+        </div>
+        <br />
+        <input type="hidden" name="client" value="client2" />
+        <input class="btn btn-primary" type="submit" asp-controller="Encryption" asp-action="Rsaencrypt" value="Encrypt" />
+    </div>
+
+
+    <br />
+
+}
+    @using (Html.BeginForm(FormMethod.Post))
+{
+
+    <div style="text-align:right; height:initial">
+        <div>
+
+            <h4>Decrypt</h4>
+            @*  @Html.TextBoxFor(m => m.RSAdecryption.TextToDecrypt) *@
+        </div>
+
+        @*  <div>
+                <label>Key(Public/Private):</label>
+                @Html.TextBoxFor(m => m.RSAdecryption.privateKey)
+            </div> *@
+        <input type="hidden" name="client" value="client2" />
+        <input class="btn btn-primary" type="submit" asp-controller="Encryption" asp-action="RsaDecrypt" value="Decrypt" />
+        <input class="btn btn-info" type="submit" asp-controller="Encryption" asp-action="SubmitPublicKey" value="Submit Key" />
+    </div>
+}
+    <br />
+    @if(Model.RSAdecryption!= null)
+{
+ if(!string.IsNullOrWhiteSpace(Model.RSAdecryption.DecryptedText ) )
+{
+    <div style="text-align:right; height:auto">
+        <h4> Encrypted Text : </h4>
+        <p style="color:darkblue; text-align:right;width:auto"> @Model.RSAdecryption.EncryptedText</p>
+        <h4>Decrypted Text:</h4>
+        <p style="color:darkblue; text-align:right;width:auto"> @Model.RSAdecryption.DecryptedText</p>
+
+    </div>
+
+}
+
+
+}
+</div>

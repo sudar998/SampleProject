@@ -1,0 +1,18 @@
+﻿ @model bool
+
+@if(Model)
+{
+<div class="alert alert-success">
+    <p>@TempData["success"]</p>
+</div>
+<h1> Success </h1>
+}
+@if(Model == false ) 
+{
+    <h2> Failed </h2>
+}
+
+<div>
+    <br />
+    <a href="@Url.Action("RSAEncryptDecryptIndex", "Encryption")">Back</a>
+</div>

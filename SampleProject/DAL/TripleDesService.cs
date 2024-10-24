@@ -14,19 +14,19 @@ namespace SampleProject.DAL
 
 
 
-        private static string key1 = "12345678abcdefgh";
-        private static string key2 = "abcdefgh12345678";
-        private static string key3 = "87654321abcdefgh";
+        //private static string key1 = "12345678abcdefgh";
+        //private static string key2 = "abcdefgh12345678";
+        //private static string key3 = "87654321abcdefgh";
         private static string iv = "12345678";
         public static string Encrypt(string plainText, string inputKey)
         {
 
             // encrypt , decrypt , encrypt 
-            byte[] encrypted = EncryptTextWithTripleDes(plainText, inputKey);
+            string encrypted = EncryptTextWithTripleDes(plainText, inputKey);
 
-            Console.WriteLine("Encryption 1 : " + Convert.ToBase64String(encrypted));
+            Console.WriteLine("Encryption 1 : " + encrypted);
 
-            return Convert.ToBase64String(encrypted);
+            return encrypted;
 
         }
 
@@ -43,14 +43,15 @@ namespace SampleProject.DAL
 
         }
 
-        protected static byte[] EncryptTextWithTripleDes(string data, string key)
+        protected static string EncryptTextWithTripleDes(string data, string key)
         {
-           
+
             using (var tripleDes = TripleDES.Create())
             {
                 tripleDes.Key = Encoding.UTF8.GetBytes(key);
                 tripleDes.IV = Encoding.UTF8.GetBytes(iv);
-                tripleDes.Padding = PaddingMode.PKCS7;
+                tripleDes.Padding = PaddingMode.None;
+                tripleDes.Mode = CipherMode.CBC;
 
                 using (var memoryStream = new MemoryStream())
                 {
@@ -64,7 +65,7 @@ namespace SampleProject.DAL
                         {
                             swWriter.Write(data);
                         }
-                        return memoryStream.ToArray();
+                        return Convert.ToBase64String( memoryStream.ToArray());
                     }
 
                 }
@@ -80,15 +81,16 @@ namespace SampleProject.DAL
             {
                 tripledes.Key = Encoding.UTF8.GetBytes(key);
                 tripledes.IV = Encoding.UTF8.GetBytes(iv);
-                tripledes.Padding = PaddingMode.PKCS7;
+                tripledes.Padding = PaddingMode.None;
+                tripledes.Mode = CipherMode.CBC;    
                 using (var memoryStream = new MemoryStream(data))
                 {
                     using (var cryptoStream = new CryptoStream(memoryStream, tripledes.CreateDecryptor(tripledes.Key, tripledes.IV), CryptoStreamMode.Read))
                     {
-                        using (var newmemoryStream = new  MemoryStream())
+                        using (var newMemoryStream = new MemoryStream())
                         {
-                              cryptoStream.CopyTo(newmemoryStream);
-                            return Encoding.UTF8.GetString(newmemoryStream.ToArray());
+                            cryptoStream.CopyTo(newMemoryStream);
+                            return Encoding.UTF8.GetString(newMemoryStream.ToArray());
                         }
 
                     }

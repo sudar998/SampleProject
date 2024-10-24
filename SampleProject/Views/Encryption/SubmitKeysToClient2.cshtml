@@ -1,0 +1,35 @@
+﻿@model SubmitKeyModel
+
+@{
+    ViewBag.Title = "Submit Key";
+}
+
+<h2> Submit Key?</h2>
+
+
+@using (Html.BeginForm(FormMethod.Post))
+{
+    @*    <div>
+
+        <label>Your Email:</label>
+        @Html.TextBoxFor(m => m.OriginEmail, new { @class = "control-label col-md-2", placeholder = "Your Email" })
+    </div>
+    <div>
+        <label>Password: </label>
+        @Html.PasswordFor(m => m.EmailPassword, new { @class = "control-label col-md-2", placeholder = "Password" })
+    </div>
+    <div>
+        <label>Source Email:</label>
+        @Html.TextBoxFor(m => m.SourceEmail, new { @class = "control-label col-md-2", placeholder = "Source Email" })
+    </div>
+
+
+    <div>
+        <br /> *@
+    <br />
+    <div>
+        <input class="btn btn-primary" type="submit" asp-controller="Encryption" asp-action="RSAEncryptDecryptIndex" value="Back" />
+        <input class="btn btn-default" type="submit" asp-controller="Encryption" asp-action="SubmitPublicKeyForClient2" value="Submit" />
+    </div>
+    <br />
+}
