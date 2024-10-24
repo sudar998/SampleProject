@@ -116,7 +116,7 @@ namespace SampleProject.Controllers
                 }
                 TempData["success"] = "Successfully encrypted";
                 return View("RSAStatus", true);
-                //return Ok(output + "\n\n\n" + "KEYS : " + model.PublicKey);
+             
 
             }
             return View("RSAStatus", false);

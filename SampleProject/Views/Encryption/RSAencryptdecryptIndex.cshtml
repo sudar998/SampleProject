@@ -9,6 +9,9 @@
 }
 
 
+
+<div style="position:absolute">
+
 @using (Html.BeginForm("RsaEncrypt", "Encryption", FormMethod.Post))
 {
 <div>
@@ -27,6 +30,7 @@
 </div>
 <br />
 }
+
 
 @using (Html.BeginForm(FormMethod.Post))
 {
@@ -47,24 +51,26 @@
     <input class="btn btn-info" type="submit" asp-controller="Encryption" asp-action="SubmitPublicKeyFromClient1" value="Submit Key" />
 </div>
 
+}
+</br>
 
-@*@if(Model.RSAdecryption!= null)
+    @if(Model.RSAdecryption!= null)
 {
- if(!string.IsNullOrWhiteSpace(Model.RSAdecryption.DecryptedText ) && string.IsNullOrWhiteSpace(Model.client=="client2" ) )
+ if(!string.IsNullOrWhiteSpace(Model.RSAdecryption.DecryptedText ) && Model.client =="client1" )
 {
-<div style="text-align:right; height:auto">
-    <h4> Encrypted Text : </h4>
-    <p style="color:darkblue; text-align:right;width:auto"> @Model.RSAdecryption.EncryptedText</p>
-    <h4>Decrypted Text:</h4>
-    <p style="color:darkblue; text-align:right;width:auto"> @Model.RSAdecryption.DecryptedText</p>
+    <div style="text-align:left; height:auto">
+        <h4> Encrypted Text : </h4>
+        <p style="color:darkblue; text-align:left;width:auto"> @Model.RSAdecryption.EncryptedText</p>
+        <h4>Decrypted Text:</h4>
+        <p style="color:darkblue; text-align:left;width:auto"> @Model.RSAdecryption.DecryptedText</p>
 
-</div>*@
+    </div>
 
 }
+}
+</div>
 
 
-
- </div>
 
 
 
@@ -115,7 +121,7 @@
     <br />
     @if(Model.RSAdecryption!= null)
 {
- if(!string.IsNullOrWhiteSpace(Model.RSAdecryption.DecryptedText ) )
+ if(!string.IsNullOrWhiteSpace(Model.RSAdecryption.DecryptedText ) && Model.client =="client2" )
 {
     <div style="text-align:right; height:auto">
         <h4> Encrypted Text : </h4>
