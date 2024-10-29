@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore.Metadata.Conventions.Internal;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Text;
 using System.Xml.Serialization;
@@ -39,58 +40,60 @@ namespace SampleProject.DAL
                 return (Encoding.UTF8.GetString(plainText), Convert.ToBase64String(privateKey));
             }
         }
-        public static string Encrypt(string plainText, string inputKey1, string inputKey2, string inputKey3)
+        public static (string Text1 , string Text2 , string finalText ) Encrypt(string plainText, string inputKey1, string inputKey2, string inputKey3)
         {
 
             // encrypt , decrypt , encrypt 
             //encrypt with key 1
-            byte[] encrypted = EncryptTextWithDes(Encoding.UTF8.GetBytes(plainText), inputKey1);
+            byte[] encrypted1 = EncryptTextWithDes(Encoding.UTF8.GetBytes(plainText), inputKey1);
 
 
-            Console.WriteLine("Encryption 1 : " + Convert.ToBase64String(encrypted));
+            Console.WriteLine("Encryption 1 : " + Convert.ToHexString(encrypted1));
 
             //decrypted with key 2 
 
-            encrypted = DecryptTextWithDes(encrypted, inputKey2);
+             var decrypted1 = DecryptTextWithDes(encrypted1, inputKey2);
 
-            Console.WriteLine("Decryption 1 : " + Convert.ToBase64String(encrypted));
+            Console.WriteLine("Decryption 1 : " + Convert.ToHexString(decrypted1));
 
             //encrypted with key 3 
-            encrypted = EncryptTextWithDes(encrypted, inputKey3);
-            Console.WriteLine("Encryption 2 : " + Convert.ToBase64String(encrypted));
+            var encrypted2 = EncryptTextWithDes(decrypted1, inputKey3);
+            Console.WriteLine("Encryption 2 : " + Convert.ToHexString(encrypted2));
 
-            return Convert.ToBase64String(encrypted);
+             
+            return (Convert.ToHexString(encrypted1) , Convert.ToHexString(decrypted1) , Convert.ToHexString(encrypted2));    
+           // return Convert.ToHexString(encrypted2);
 
         }
 
 
-        public static string Decrypt(string encryptedText, string inputKey1, string inputKey2, string inputKey3)
+        public static (string text1 , string text2 , string finaltext)Decrypt(string encryptedText, string inputKey1, string inputKey2, string inputKey3)
         {
             //decrypt , encrypt , decrypt 
             Console.WriteLine("DECRYPTION");
 
             //decrypt with key 3 
 
-            string decrypt1 = Convert.ToBase64String(DecryptTextWithDes(Convert.FromBase64String(encryptedText), inputKey3));
+            string decrypt1 = Convert.ToHexString(DecryptTextWithDes(Convert.FromHexString(encryptedText), inputKey3));
 
 
             Console.WriteLine("Decryption 1 : " + decrypt1);
 
             //encrypt with key 2 
 
-            byte[] secondEncrypt = EncryptTextWithDes(Convert.FromBase64String(decrypt1), inputKey2);
+            byte[] Encrypt1 = EncryptTextWithDes(Convert.FromHexString(decrypt1), inputKey2);
 
-            Console.WriteLine("Encryption 1: " + Convert.ToBase64String(secondEncrypt));
+            Console.WriteLine("Encryption 1: " + Convert.ToHexString(Encrypt1));
 
 
             ////decrypt back with key 1 
 
-            string finalDecrypt = Encoding.UTF8.GetString(DecryptTextWithDes(secondEncrypt, inputKey1));
+            string finalDecrypt = Encoding.UTF8.GetString(DecryptTextWithDes(Encrypt1, inputKey1));
 
             Console.WriteLine("Decryption 2 : " + finalDecrypt);
 
-
-            return finalDecrypt;
+            return (decrypt1, Convert.ToHexString(Encrypt1), finalDecrypt);
+            //return finalDecrypt;
 
         }
 

@@ -62,6 +62,9 @@
         @Html.HiddenFor(m => m.TextToEncrypt)
     </div>
     <div>
+        @Html.HiddenFor(m => m.encryptionResult.encrypted1)
+    </div>
+    <div>
         <label>Encrypted Text:</label>
         @Html.TextBoxFor(m => m.EncryptedText)
     </div>
@@ -83,9 +86,41 @@
     </div>
 }
 
+
+@if(!string.IsNullOrEmpty(Model.encryptionResult.encrypted1)
+&& !string.IsNullOrEmpty(Model.encryptionResult.decrypted1) && 
+!string.IsNullOrEmpty(Model.encryptionResult.finaltext))
+{
+       
+    <br/> 
+    <h5> Encryptions(EDE) Results </h5>
+    <div> 
+        <h7> Original Text : @Model.TextToEncrypt </h7> <br />
+        <h7> CipherText 1 : @Model.encryptionResult.encrypted1 </h7> <br /> 
+        <h7> CipherText 2 : @Model.encryptionResult.decrypted1 </h7><br />
+        <h7> Final CipherText : @Model.encryptionResult.finaltext </h7>
+    </div>
+}
+@if (!string.IsNullOrEmpty(Model.decryptionResult.decrypted1)
+&& !string.IsNullOrEmpty(Model.decryptionResult.encrypted1) &&
+!string.IsNullOrEmpty(Model.decryptionResult.finaltext))
+{
+
+    <br />
+    <h5> Decryption(DED) Results </h5>
+    <div>
+        <h7> CipherText to Decrypt : @Model.EncryptedText </h7> <br/> 
+        <h7> CipherText 2 : @Model.decryptionResult.decrypted1 </h7> <br />
+        <h7> CipherText 3 : @Model.decryptionResult.encrypted1 </h7><br />
+        <h7> Original Text : @Model.decryptionResult.finaltext </h7>
+    </div>
+}
+
+
 @if (!string.IsNullOrEmpty(Model.DecryptedText))
 {
     <br />
+   
     <div>
         <h4>Decrypted Text:</h4>
         <p style="color:darkblue; background-color:lightgreen; width:fit-content"> @Model.DecryptedText</p>

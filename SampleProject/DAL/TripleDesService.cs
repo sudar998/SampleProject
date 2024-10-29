@@ -35,7 +35,7 @@ namespace SampleProject.DAL
         {
             //decrypt , encrypt , decrypt 
 
-            var decryptedText = DecryptTextWithTripleDes(Convert.FromBase64String(encryptedText), inputKey);
+            var decryptedText = DecryptTextWithTripleDes(Convert.FromHexString(encryptedText), inputKey);
 
 
 
@@ -65,7 +65,7 @@ namespace SampleProject.DAL
                         {
                             swWriter.Write(data);
                         }
-                        return Convert.ToBase64String( memoryStream.ToArray());
+                        return Convert.ToHexString( memoryStream.ToArray());
                     }
 
                 }

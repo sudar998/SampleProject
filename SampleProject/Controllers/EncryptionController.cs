@@ -41,7 +41,7 @@ namespace SampleProject.Controllers
                 return View("Index", model);
             }
             var output = TripleDesService.Decrypt(model.EncryptedText, model.Key);
-
+            
             model.DecryptedText = output;
 
             return View("Index", model);
@@ -62,7 +62,10 @@ namespace SampleProject.Controllers
             }
 
             var output = DESService.Encrypt(model.TextToEncrypt, model.Key, model.Key2, model.Key3);
-            model.EncryptedText = output;
+            model.EncryptedText = output.finalText;
+            model.encryptionResult.encrypted1 = output.Text1; 
+            model.encryptionResult.decrypted1 = output.Text2;
+            model.encryptionResult.finaltext = output.finalText; 
 
             return View("DesEncryptDecryptIndex", model);
 
@@ -71,15 +74,25 @@ namespace SampleProject.Controllers
 
         public IActionResult DesDecryption(EncryptionModel model)
         {
-            if (string.IsNullOrEmpty(model.EncryptedText))
+
+            Console.WriteLine( model.TextToEncrypt);
+
+           
+            model.encryptionResult.finaltext = model.EncryptedText; 
+            if (string.IsNullOrEmpty(model.encryptionResult.finaltext))
             {
                 TempData["EmptyEncryptedText"] = "Empty text to decrypt";
-                return View("DesEncryptDecryptIndexIndex", model);
+                return View("DesEncryptDecryptIndex", model);
             }
 
-            var output = DESService.Decrypt(model.EncryptedText, model.Key, model.Key2, model.Key3);
-            model.DecryptedText = output;
+            var output = DESService.Decrypt(model.encryptionResult.finaltext, model.Key, model.Key2, model.Key3);
+            //model.DecryptedText = output;
+            model.decryptionResult.decrypted1 = output.text1;
+            model.decryptionResult.encrypted1 = output.text2;
+            model.decryptionResult.finaltext = output.finaltext;
 
+
+           
             return View("DesEncryptDecryptIndex", model);
 
         }
@@ -95,27 +108,32 @@ namespace SampleProject.Controllers
 
 
         [HttpPost]
-        public IActionResult RsaEncrypt(RSAModel model, string client)
+        public IActionResult RsaEncrypt(RSAModel model, string client , string privateKey )
         {
             if (!string.IsNullOrWhiteSpace(model.RSAencryption.Text) && !string.IsNullOrWhiteSpace(model.RSAencryption.PublicKey))
             {
 
-                var output = Convert.ToBase64String(RSAService.EncryptMessage(model.RSAencryption.Text, model.RSAencryption.PublicKey));
+                var output = Convert.ToHexString(RSAService.EncryptMessage(model.RSAencryption.Text, model.RSAencryption.PublicKey));
 
-
+               
                 Console.WriteLine(output);
 
                 Console.WriteLine(" ");
-                if (client == "client1")
-                {
-                    System.IO.File.WriteAllText(@"C:\Users\adark\source\repos\SampleProject\client2\EncryptedText.txt", output);
-                }
-                else if(client =="client2")
-                {
-                    System.IO.File.WriteAllText(@"C:\Users\adark\source\repos\SampleProject\client1\EncryptedText.txt", output);
-                }
-                TempData["success"] = "Successfully encrypted";
-                return View("RSAStatus", true);
+
+                model.RSAencryption.HexString = output;
+                model.privateKeygeneration = privateKey; 
+
+                return View("RSAencryptdecryptIndex", model); 
+                //if (client == "client1")
+                //{
+                //    System.IO.File.WriteAllText(@"C:\Users\adark\source\repos\SampleProject\client2\EncryptedText.txt", output);
+                //}
+                //else if(client =="client2")
+                //{
+                //    System.IO.File.WriteAllText(@"C:\Users\adark\source\repos\SampleProject\client1\EncryptedText.txt", output);
+                //}
+                //TempData["success"] = "Successfully encrypted";
+                //return View("RSAStatus", true);
              
 
             }
@@ -123,30 +141,30 @@ namespace SampleProject.Controllers
         }
 
         [HttpPost]
-        public IActionResult RsaDecrypt(RSAModel model, string client)
+        public IActionResult RsaDecrypt(RSAModel model, string client , string encryptedText , string key)
         {
             string output = string.Empty;
 
             string ReadTextFromFile = string.Empty;
             string ReadkeyFromFile = string.Empty;
-            if (string.IsNullOrEmpty(model.RSAdecryption.EncryptedText))
+            if (!string.IsNullOrEmpty(encryptedText))
 
             {
-                if (client == "client2")
-                {
-                    ReadTextFromFile = System.IO.File.ReadAllText(@"C:\Users\adark\source\repos\SampleProject\client2\EncryptedText.txt");
-                    ReadkeyFromFile = System.IO.File.ReadAllText(@"C:\Users\adark\source\repos\SampleProject\client2\MyPrivateKey.xml");
-                }
-                else if (client == "client1")
-                {
+                //if (client == "client2")
+                //{
+                //    ReadTextFromFile = System.IO.File.ReadAllText(@"C:\Users\adark\source\repos\SampleProject\client2\EncryptedText.txt");
+                //    ReadkeyFromFile = System.IO.File.ReadAllText(@"C:\Users\adark\source\repos\SampleProject\client2\MyPrivateKey.xml");
+                //}
+                //else if (client == "client1")
+                //{
 
-                    ReadTextFromFile = System.IO.File.ReadAllText(@"C:\Users\adark\source\repos\SampleProject\client1\EncryptedText.txt");
-                    ReadkeyFromFile = System.IO.File.ReadAllText(@"C:\Users\adark\source\repos\SampleProject\client1\MyPrivateKey.xml");
-                }
-
-                output = RSAService.DecryptMessage(Convert.FromBase64String(ReadTextFromFile), ReadkeyFromFile);
+                //    ReadTextFromFile = System.IO.File.ReadAllText(@"C:\Users\adark\source\repos\SampleProject\client1\EncryptedText.txt");
+                //    ReadkeyFromFile = System.IO.File.ReadAllText(@"C:\Users\adark\source\repos\SampleProject\client1\MyPrivateKey.xml");
+                //}           
+                
+                output = RSAService.DecryptMessage(Convert.FromHexString(encryptedText), key);
             }
-            model.RSAdecryption.EncryptedText = ReadTextFromFile;
+            model.RSAdecryption.EncryptedText = encryptedText;
             model.RSAdecryption.DecryptedText = output;
             model.client = client; 
             return View("RSAencryptdecryptIndex", model);
@@ -224,6 +242,17 @@ namespace SampleProject.Controllers
 
             TempData["SubmitPublicKeyFromClientsuccess"] = "Succesfully submitted";
             return View("RSAencryptdecryptIndex", new RSAModel());
+        }
+
+
+        [HttpPost]
+        public IActionResult GenerateKeyforClient1()
+        {
+            var output=  RSAService.GenerateKeysforClient1();
+
+            return View("RSAencryptdecryptIndex", new RSAModel() { publicKeygeneration = output.publicKey , 
+            
+            privateKeygeneration = output.privateKey});
         }
 
 
