@@ -108,7 +108,7 @@ namespace SampleProject.Controllers
 
 
         [HttpPost]
-        public IActionResult RsaEncrypt(RSAModel model, string client , string privateKey )
+        public IActionResult RsaEncrypt(RSAModel model, string client , string privateKey)
         {
             if (!string.IsNullOrWhiteSpace(model.RSAencryption.Text) && !string.IsNullOrWhiteSpace(model.RSAencryption.PublicKey))
             {
@@ -121,7 +121,11 @@ namespace SampleProject.Controllers
                 Console.WriteLine(" ");
 
                 model.RSAencryption.HexString = output;
-                model.privateKeygeneration = privateKey; 
+                model.RSAencryption.PrivateKey = privateKey;
+                model.publicKeygeneration = string.Empty;
+                model.privateKeygeneration= string.Empty;
+             
+                
 
                 return View("RSAencryptdecryptIndex", model); 
                 //if (client == "client1")
@@ -141,13 +145,13 @@ namespace SampleProject.Controllers
         }
 
         [HttpPost]
-        public IActionResult RsaDecrypt(RSAModel model, string client , string encryptedText , string key)
+        public IActionResult RsaDecrypt(RSAModel model, string client , string originalText , string key)
         {
             string output = string.Empty;
 
             string ReadTextFromFile = string.Empty;
             string ReadkeyFromFile = string.Empty;
-            if (!string.IsNullOrEmpty(encryptedText))
+            if (!string.IsNullOrEmpty(model.RSAencryption?.HexString))
 
             {
                 //if (client == "client2")
@@ -162,10 +166,15 @@ namespace SampleProject.Controllers
                 //    ReadkeyFromFile = System.IO.File.ReadAllText(@"C:\Users\adark\source\repos\SampleProject\client1\MyPrivateKey.xml");
                 //}           
                 
-                output = RSAService.DecryptMessage(Convert.FromHexString(encryptedText), key);
+                output = RSAService.DecryptMessage(Convert.FromHexString(model.RSAencryption?.HexString), key);
             }
-            model.RSAdecryption.EncryptedText = encryptedText;
+            model.RSAdecryption.EncryptedText = model.RSAencryption.HexString;
             model.RSAdecryption.DecryptedText = output;
+
+            //encryption model
+            model.RSAencryption.HexString = string.Empty;
+            model.RSAencryption.Text = originalText; 
+
             model.client = client; 
             return View("RSAencryptdecryptIndex", model);
         }

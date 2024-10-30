@@ -17,13 +17,16 @@
         <div>
             <h2> RSA Algorithm </h2>
             <input type="hidden" name="privateKey" value="@Model.privateKeygeneration" />
+            <input type="hidden" name="publicKey" value="@Model.publicKeygeneration" />
 
             <label>Text to Encrypt:</label>
-            @Html.TextBoxFor(m => m.RSAencryption.Text)
+            <input type="text" name="model.RSAencryption.Text" placeholder="Enter Text" value="@Model.RSAencryption.Text" />
+            @*   @Html.TextBoxFor(m => m.RSAencryption.Text) *@
         </div>
         <div>
-            <label>Key(Public/Private):</label>
-            @Html.TextBoxFor(m => m.RSAencryption.PublicKey)
+            <label>Public Key:</label>
+            <input type="text" name="model.RSAencryption.PublicKey" placeholder="Enter Public Key" />
+            @*   @Html.TextBoxFor(m => m.RSAencryption.PublicKey) *@
         </div>
         <div>
             <br />
@@ -49,8 +52,11 @@
         @Html.TextBoxFor(m => m.RSAdecryption.privateKey)
         </div> *@
             <input type="hidden" name="client" value="client1" />
-            <input type="hidden" name="encryptedText" value="@Model.RSAencryption?.HexString" />
-            <input type="hidden" name="key" value="@Model.privateKeygeneration" />
+            
+           @*  <input type="hidden" name="encryptedText" value="@Model.RSAencryption?.HexString" /> *@
+            <input type="hidden" name="OriginalText" value="@Model.RSAencryption.Text" /> 
+         <H7> CipherText(Hex)</H7> @Html.TextBoxFor(m=>m.RSAencryption.HexString , new { Name = "encryptedText"})<br/>
+        <h7> Private Key </h7>  <input type="text"  name="key" placeholder="Enter key" /> <br /> <br /> 
             <input class="btn btn-primary" type="submit" asp-controller="Encryption" asp-action="RsaDecrypt" value="Decrypt" />
             <input class="btn btn-info" type="submit" asp-controller="Encryption" asp-action="GenerateKeyforClient1" value="Generate Keys" />
         </div>
@@ -77,9 +83,12 @@
 
 <div style="text-align:center">
 
-    @if (!string.IsNullOrWhiteSpace(Model.RSAencryption?.HexString))
+    @if (!string.IsNullOrWhiteSpace(Model.RSAencryption?.HexString) && !string.IsNullOrEmpty(Model.RSAencryption.PrivateKey) && !string.IsNullOrEmpty(Model.RSAencryption.PublicKey))
     {
-        <h7> <h6><b> Encrypted </b> </h6>  @Model.RSAencryption.HexString </h7>
+        <h7> <h6><b> Encrypted </b> </h6>  @Model.RSAencryption.HexString </h7> <br/>
+        <h7> <h6> <b> Public key </b>  </h6> @Model.RSAencryption.PublicKey</h7>
+        <h7> <h6> <b> Private key </b>  </h6> @Model.RSAencryption.PrivateKey</h7>
+        
     }
 
 
