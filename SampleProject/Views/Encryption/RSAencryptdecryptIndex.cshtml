@@ -25,43 +25,106 @@
         </div>
         <div>
             <label>Public Key:</label>
-            <input type="text" name="model.RSAencryption.PublicKey" placeholder="Enter Public Key" />
+            <input type="text" name="model.RSAencryption.UserInputKey" placeholder="Enter Public Key" />
             @*   @Html.TextBoxFor(m => m.RSAencryption.PublicKey) *@
         </div>
         <div>
             <br />
             <input type="hidden" name="client" value="client1" />
             <input class="btn btn-primary" type="submit" value="Encrypt" />
-        </div>
-        <br />
-    }
-
-
-    @using (Html.BeginForm(FormMethod.Post))
-    {
-
-        <div style="text-align:center; height:initial">
-            <div>
-
-                <h4>Decrypt</h4>
-                @*  @Html.TextBoxFor(m => m.RSAdecryption.TextToDecrypt) *@
-            </div>
-
-            @*  <div>
-        <label>Key(Public/Private):</label>
-        @Html.TextBoxFor(m => m.RSAdecryption.privateKey)
-        </div> *@
-            <input type="hidden" name="client" value="client1" />
-            
-           @*  <input type="hidden" name="encryptedText" value="@Model.RSAencryption?.HexString" /> *@
-            <input type="hidden" name="OriginalText" value="@Model.RSAencryption.Text" /> 
-         <H7> CipherText(Hex)</H7> @Html.TextBoxFor(m=>m.RSAencryption.HexString , new { Name = "encryptedText"})<br/>
-        <h7> Private Key </h7>  <input type="text"  name="key" placeholder="Enter key" /> <br /> <br /> 
-            <input class="btn btn-primary" type="submit" asp-controller="Encryption" asp-action="RsaDecrypt" value="Decrypt" />
             <input class="btn btn-info" type="submit" asp-controller="Encryption" asp-action="GenerateKeyforClient1" value="Generate Keys" />
         </div>
+        <br />
 
     }
+
+    @* digital signature  *@
+
+
+    @using (Html.BeginForm("SignMessage", "Encryption", FormMethod.Post))
+
+    {
+
+        <h6> Create Signature </h6>
+        <h7> Text </h7>  <input type="text" name="message" value="@Model.RSAencryption.Text" /> <br />
+        <h7> Private Key</h7> <input type="text" name="privateKey" value="" /> <br />
+        <input type="hidden" name="publicKey" value="@Model.RSAencryption.PublicKey" />
+        @* <h7> Encrypted Text </h7>  *@
+        <input type="hidden" name="hexString" value="@Model.RSAencryption.HexString" />
+
+        <br />
+
+
+        <input class="btn btn-primary" type="submit" value="Create" />
+
+
+    }
+
+    @using (Html.BeginForm("VerifySignature", "Encryption", FormMethod.Post))
+
+    {
+
+        <br />
+        <div>
+            <h6> Verify Signature </h6>
+
+            <h7> CipherText </h7> <input type="text" name="model.RSAencryption.HexString" value="@Model.RSAencryption.HexString" placeholder="Add CipherText" />  <br />
+            <h7> Private Key </h7>  <input type="text" name="privateKey" placeholder="Enter private key to decrypt message" /> <br /> <br />
+            <h7> Signature </h7>  <input type="text" name="model.Signature" value="@Model.Signature" placeholder="Add Signature" /> <br />
+            <h7> Public Key</h7> <input type="text" name="publicKey" value="" placeholder="Enter public key to verify signature" />  <br /> <br />
+            <input type="hidden" name="model.RSAencryption.PublicKey" value="@Model.RSAencryption.PublicKey" />
+            <input type="hidden" name="model.RSAencryption.PrivateKey" value="@Model.RSAencryption.PrivateKey" /> <br />
+
+            @if( !string.IsNullOrEmpty(Model.HashOutput))
+            {
+             <h7> Hash </h7>   <input type="text" name="model.HashOutput" value="@Model.HashOutput" placeholder="Add Signature" /> <br />
+            }
+            @if (Model.DisplayDecryptedTextInTextBox)
+            {
+                <h7> Original Text </h7>  <input type="text" name="model.RSAdecryption.DecryptedText" value="@Model.RSAdecryption.DecryptedText" placeholder="Enter original text" /> <br /> <br />
+            }
+            <input class="btn btn-primary" type="submit" asp-controller="Encryption" asp-action="RsaDecrypt" value="Decrypt CipherText" />
+
+            <input class="btn btn-primary" asp-controller="Encryption" asp-action="HashText" type="submit" value="Hash" />
+            <input class="btn btn-primary" type="submit" value="Verify Signature" />
+
+        </div>
+
+    }
+
+    @if (!string.IsNullOrWhiteSpace(Model.Signature) && Model.DisplaySignature)
+    {
+        <br />
+        <h6> Signature(Hex) : @Model.Signature </h6>
+    }
+
+
+
+
+    @* decrypt *@
+
+    @*   @using (Html.BeginForm(FormMethod.Post))
+    {
+
+    <div style="text-align:center; height:initial">
+    <div>
+
+    <h4>Decrypt</h4>
+
+    </div>
+
+
+    <input type="hidden" name="client" value="client1" />
+
+
+    <input type="hidden" name="OriginalText" value="@Model.RSAencryption.Text" />
+    <H7> CipherText(Hex)</H7> @Html.TextBoxFor(m => m.RSAencryption.HexString, new { Name = "encryptedText" })<br />
+    <h7> Private Key </h7>  <input type="text" name="key" placeholder="Enter key" /> <br /> <br />
+    <input class="btn btn-primary" type="submit" asp-controller="Encryption" asp-action="RsaDecrypt" value="Decrypt" />
+    <input class="btn btn-info" type="submit" asp-controller="Encryption" asp-action="GenerateKeyforClient1" value="Generate Keys" />
+    </div>
+
+    } *@
     </br>
 
     @if (Model.RSAdecryption != null)
@@ -79,16 +142,39 @@
         }
     }
 </div>
+<br />
+<div>
+    @if (!string.IsNullOrEmpty(Model.HashOutput))
+    {
+        <h6>  Hash : @Model.HashOutput </h6>
+    }
+</div>
+
+
+
+<div>
+
+    @if(Model.VerifiedSignature)
+    {
+        <h6 style="color:purple"> Verified Signature : <h6 style="color:forestgreen">  Yes </h6> </h6>
+    }else
+    {
+        <h6 style="color:purple"> Verified Signature :  <h6 style="color:red"> N/A </h6> </h6>
+    }
+</div>
 
 
 <div style="text-align:center">
 
-    @if (!string.IsNullOrWhiteSpace(Model.RSAencryption?.HexString) && !string.IsNullOrEmpty(Model.RSAencryption.PrivateKey) && !string.IsNullOrEmpty(Model.RSAencryption.PublicKey))
+    @if (!string.IsNullOrWhiteSpace(Model.RSAencryption?.HexString))
     {
-        <h7> <h6><b> Encrypted </b> </h6>  @Model.RSAencryption.HexString </h7> <br/>
+        <h7> <h6><b> Encrypted </b> </h6>  @Model.RSAencryption.HexString </h7> <br />
+    }
+    @if (!string.IsNullOrEmpty(Model.RSAencryption.PrivateKey) && !string.IsNullOrEmpty(Model.RSAencryption.PublicKey))
+    {
         <h7> <h6> <b> Public key </b>  </h6> @Model.RSAencryption.PublicKey</h7>
         <h7> <h6> <b> Private key </b>  </h6> @Model.RSAencryption.PrivateKey</h7>
-        
+
     }
 
 

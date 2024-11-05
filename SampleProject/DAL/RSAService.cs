@@ -1,4 +1,6 @@
-﻿using Microsoft.Identity.Client;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
+using Microsoft.Identity.Client;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -61,11 +63,11 @@ namespace SampleProject.DAL
                 // var privatekey=  rsa.ToXmlString(false);
 
 
-                rsaClient1.PersistKeyInCsp = false; 
+                rsaClient1.PersistKeyInCsp = false;
                 string publicKey = rsaClient1.ToXmlString(false);  // Public key
                 string privateKey = rsaClient1.ToXmlString(true);  // Private key
                 return (publicKey, privateKey);
-            } 
+            }
         }
 
 
@@ -93,22 +95,23 @@ namespace SampleProject.DAL
                 rsa.FromXmlString(key);
                 //  File.WriteAllText(@"C:\Users\adark\source\repos\encryptedText\publickey.xml" , rsa.ToXmlString())
                 byte[] messageBytes = Encoding.UTF8.GetBytes(message);
-                byte[] encryptedBytes = rsa.Encrypt(messageBytes, padding:RSAEncryptionPadding.OaepSHA256);
+                byte[] encryptedBytes = rsa.Encrypt(messageBytes, padding: RSAEncryptionPadding.OaepSHA256);
 
                 // rsa.Encrypt(encryptedBytes, RSAEncryptionPadding.o);
                 return encryptedBytes;
             }
         }
 
-        public static string DecryptMessage(byte[] encryptedMessage, string privateKey)
+        public static string DecryptMessage(byte[] encryptedMessage, string key)
         {
             using (RSACng rsa = new RSACng(2048))
             {
                 try
                 {
-                    rsa.FromXmlString(privateKey);
+                    rsa.FromXmlString(key);
+
                     // byte[] decryptedBytes = rsa.Decrypt(encryptedMessage, false);
-                    byte[] decryptedBytes=  rsa.Decrypt(encryptedMessage, padding: RSAEncryptionPadding.OaepSHA256); 
+                    byte[] decryptedBytes = rsa.Decrypt(encryptedMessage, padding: RSAEncryptionPadding.OaepSHA256);
                     return Encoding.UTF8.GetString(decryptedBytes);
 
 
@@ -117,6 +120,42 @@ namespace SampleProject.DAL
                 {
                     throw;
                 }
+            }
+        }
+
+
+        public static byte[] SignMessage(string message, string privateKey)
+        {
+            byte[] signature = null;
+            using (RSACng rsa = new RSACng(2048))
+            {
+                rsa.FromXmlString(privateKey);
+
+                var hashOutput = HashMessage(message);
+                signature = rsa.SignData(hashOutput, hashAlgorithm: HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
+                return signature;
+
+
+            }
+        }
+
+        public static byte[] HashMessage(string message)
+        {
+            using (var sha256 = SHA256.Create())
+            {
+                var output = sha256.ComputeHash(Encoding.UTF8.GetBytes(message));
+                return output;
+            }
+        }
+
+
+        public static bool VerifySignature(string hashOutput, string signature, string publicKey)
+        {
+            using (var rsa = new RSACng(2048))
+            {
+                rsa.FromXmlString(publicKey);
+                return rsa.VerifyData(Convert.FromHexString(hashOutput), Convert.FromHexString(signature), HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
+
             }
         }
     }
