@@ -68,10 +68,10 @@
         <div>
             <h6> Verify Signature </h6>
 
-            <h7> CipherText </h7> <input type="text" name="model.RSAencryption.HexString" value="@Model.RSAencryption.HexString" placeholder="Add CipherText" />  <br />
-            <h7> Private Key </h7>  <input type="text" name="privateKey" placeholder="Enter private key to decrypt message" /> <br /> <br />
-            <h7> Signature </h7>  <input type="text" name="model.Signature" value="@Model.Signature" placeholder="Add Signature" /> <br />
-            <h7> Public Key</h7> <input type="text" name="publicKey" value="" placeholder="Enter public key to verify signature" />  <br /> <br />
+            <h7> CipherText </h7> <textarea type="text" name="model.RSAencryption.HexString" value="@Model.RSAencryption.HexString" placeholder="Add CipherText" cols="50"> @Model.RSAencryption.HexString  </textarea> <br />
+            <h7> Private Key </h7>  <input type="text" name="privateKey" placeholder="Enter private key to decrypt cipher"  size="30" /> <br /> <br />
+            <h7> Signature </h7>  <textarea type="text" name="model.Signature" value="@Model.Signature" cols="50"> @Model.Signature </textarea>  <br />
+            <h7> Public Key</h7> <input type="text" name="publicKey" value="" placeholder="Enter public key to verify signature" size="30" />  <br /> <br />
             <input type="hidden" name="model.RSAencryption.PublicKey" value="@Model.RSAencryption.PublicKey" />
             <input type="hidden" name="model.RSAencryption.PrivateKey" value="@Model.RSAencryption.PrivateKey" /> <br />
 
@@ -146,7 +146,7 @@
 <div>
     @if (!string.IsNullOrEmpty(Model.HashOutput))
     {
-        <h6>  Hash : @Model.HashOutput </h6>
+        <h6>  Hash : @Model.HashOutput </h6> <br/>
     }
 </div>
 
@@ -154,10 +154,14 @@
 
 <div>
 
-    @if(Model.VerifiedSignature)
+    @if(Model.VerifiedSignature == RSAModel.VerifiedSign.YES)
     {
         <h6 style="color:purple"> Verified Signature : <h6 style="color:forestgreen">  Yes </h6> </h6>
-    }else
+    }else @if(Model.VerifiedSignature == RSAModel.VerifiedSign.NO)
+    {
+        <h6 style="color:purple"> Verified Signature :  <h6 style="color:red"> N0 </h6> </h6>
+    } 
+    else
     {
         <h6 style="color:purple"> Verified Signature :  <h6 style="color:red"> N/A </h6> </h6>
     }

@@ -154,6 +154,7 @@ namespace SampleProject.DAL
             using (var rsa = new RSACng(2048))
             {
                 rsa.FromXmlString(publicKey);
+                signature = signature.Trim();
                 return rsa.VerifyData(Convert.FromHexString(hashOutput), Convert.FromHexString(signature), HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
 
             }

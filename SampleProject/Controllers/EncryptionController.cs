@@ -165,8 +165,12 @@ namespace SampleProject.Controllers
 
                 //    ReadTextFromFile = System.IO.File.ReadAllText(@"C:\Users\adark\source\repos\SampleProject\client1\EncryptedText.txt");
                 //    ReadkeyFromFile = System.IO.File.ReadAllText(@"C:\Users\adark\source\repos\SampleProject\client1\MyPrivateKey.xml");
-                //}           
-
+                //}
+                model.RSAencryption.HexString = model.RSAencryption.HexString.Trim();
+                if (model.RSAencryption?.HexString.Length % 2 != 0)
+                {
+                    model.RSAencryption.HexString = "0" + model.RSAencryption.HexString;  // Make it even-length
+                }
                 output = RSAService.DecryptMessage(Convert.FromHexString(model.RSAencryption?.HexString), privateKey);
             }
             model.RSAdecryption.EncryptedText = model.RSAencryption.HexString;
@@ -330,8 +334,12 @@ namespace SampleProject.Controllers
             var response = RSAService.VerifySignature(model.HashOutput, model.Signature, publicKey);
             if (response)
             {
-                model.VerifiedSignature = true;
+                model.VerifiedSignature = RSAModel.VerifiedSign.YES;
+            }else
+            {
+                   model.VerifiedSignature = RSAModel.VerifiedSign.NO;
             }
+            model.DisplaySignature = false;
             return View("RSAencryptdecryptIndex", model);
         }
 
