@@ -1,5 +1,6 @@
 ﻿@model RSAModel
 
+<div>
 
 @if (TempData["SubmitPublicKeyFromClientsuccess"] != null)
 {
@@ -7,6 +8,8 @@
         @TempData["SubmitPublicKeyFromClientsuccess"]
     </div>
 }
+
+
 
 
 
@@ -100,6 +103,7 @@
 
 
 
+    </div>
 
     @* decrypt *@
 
@@ -165,10 +169,11 @@
     {
         <h6 style="color:purple"> Verified Signature :  <h6 style="color:red"> N/A </h6> </h6>
     }
+    <br />
 </div>
 
 
-<div style="text-align:center">
+<div style="text-align:left">
 
     @if (!string.IsNullOrWhiteSpace(Model.RSAencryption?.HexString))
     {
@@ -184,7 +189,7 @@
 
 </div>
 
-<div style="text-align:center">
+<div style="text-align:left">
 
 
     @if (!string.IsNullOrEmpty(Model.publicKeygeneration) && !string.IsNullOrWhiteSpace(Model.privateKeygeneration))
@@ -198,6 +203,8 @@
         </H7>
     }
 </div>
+
+
 
 
 
