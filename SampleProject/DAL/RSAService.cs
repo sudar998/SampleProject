@@ -132,7 +132,7 @@ namespace SampleProject.DAL
                 rsa.FromXmlString(privateKey);
 
                 var hashOutput = HashMessage(message);
-                signature = rsa.SignData(hashOutput, hashAlgorithm: HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
+                signature = rsa.SignData(hashOutput, hashAlgorithm: HashAlgorithmName.SHA256, RSASignaturePadding.Pss);
                 return signature;
 
 
@@ -155,7 +155,7 @@ namespace SampleProject.DAL
             {
                 rsa.FromXmlString(publicKey);
                 signature = signature.Trim();
-                return rsa.VerifyData(Convert.FromHexString(hashOutput), Convert.FromHexString(signature), HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
+                return rsa.VerifyData(Convert.FromHexString(hashOutput), Convert.FromHexString(signature), HashAlgorithmName.SHA256, RSASignaturePadding.Pss );
 
             }
         }
