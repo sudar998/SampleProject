@@ -69,7 +69,7 @@
 
         <br />
         <div>
-            <h6> Verify Signature </h6>
+            <h6> Decrypt Text &  Verify Signature </h6>
 
             <h7> CipherText </h7> <textarea type="text" name="model.RSAencryption.HexString" value="@Model.RSAencryption.HexString" placeholder="Add CipherText" cols="50"> @Model.RSAencryption.HexString  </textarea> <br />
             <h7> Private Key </h7>  <input type="text" name="privateKey" placeholder="Enter private key to decrypt cipher"  size="30" /> <br /> <br />
@@ -177,12 +177,18 @@
 
     @if (!string.IsNullOrWhiteSpace(Model.RSAencryption?.HexString))
     {
-        <h7> <h6><b> Encrypted </b> </h6>  @Model.RSAencryption.HexString </h7> <br />
+        <h7> <h6><b> Encrypted </b> </h6>  @Model.RSAencryption.HexString </h7> <br /><br/>
     }
     @if (!string.IsNullOrEmpty(Model.RSAencryption.PrivateKey) && !string.IsNullOrEmpty(Model.RSAencryption.PublicKey))
     {
-        <h7> <h6> <b> Public key </b>  </h6> @Model.RSAencryption.PublicKey</h7>
-        <h7> <h6> <b> Private key </b>  </h6> @Model.RSAencryption.PrivateKey</h7>
+        <h7> <h6> <b> Public key </b>  </h6><textarea id="TextToCopy1" style="height:200px ; width:700px" readonly> @Model.RSAencryption.PublicKey </textarea> </h7>
+        <button class="copyButton" onclick="copyTextToClipboard()" data-clipboard-target="#TextToCopy1"> &#x1f4cb; Copy </button> 
+          <span id="copyMessage1" style="display:none; color:green; margin-left: 10px;">Text copied!</span> <br/> <br/>
+
+
+        <h7> <h6> <b> Private key </b>  </h6> <textarea id="TextToCopy2" style="height:200px ; width:700px" readonly>  @Model.RSAencryption.PrivateKey </textarea> </h7>
+          <button class="copyButton" onclick="copyTextToClipboard()" data-clipboard-target="#TextToCopy2"> &#x1f4cb; Copy </button>
+            <span id="copyMessage2" style="display:none; color:green; margin-left: 10px;">Text copied!</span>
 
     }
 
@@ -196,79 +202,40 @@
     {
 
         <br />
-        <h7> <h6><b> Public key </b> </h6> @Model.publicKeygeneration</h7> <br /> <br />
-        <H7>
-            <h6><b> Private Key </b></h6> @Model.privateKeygeneration
+        <h7> <h6><b> Public key </b> </h6><textarea id="TextToCopy1" style="height:200px ; width:700px" readonly> @Model.publicKeygeneration </textarea> </h7> 
+          <button class="copyButton" onclick="copyTextToClipboard()" data-clipboard-target="#TextToCopy1"> &#x1f4cb; Copy </button> 
+          <span id="copyMessage1" style="display:none; color:green; margin-left: 10px;">Text copied!</span> <br/> <br/>
+
+        <h7><h6><b> Private Key </b> </h6> <textarea id="TextToCopy2" style="height:200px ; width:700px" readonly>  @Model.privateKeygeneration > </textarea>
+            <button class="copyButton" onclick="copyTextToClipboard()" data-clipboard-target="#TextToCopy2"> &#x1f4cb; Copy </button>
+            <span id="copyMessage2" style="display:none; color:green; margin-left: 10px;">Text copied!</span>
 
         </H7>
     }
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.8/dist/clipboard.min.js"></script>
 
+<script>
+    // Initialize Clipboard.js for all copy buttons
+    var clipboard = new ClipboardJS('.copyButton');
 
+    // Show message when the text is successfully copied
+    clipboard.on('success', function(e) {
+        // Show the "Text copied!" message for the relevant textarea
+        var targetId = e.trigger.getAttribute('data-clipboard-target'); // Get the target textarea's ID
+        var messageElement = document.getElementById("copyMessage" + targetId.charAt(targetId.length - 1)); // Get the corresponding message span
+        messageElement.style.display = 'inline'; // Show the message
 
+        // Hide the message after 2 seconds
+        setTimeout(function() {
+            messageElement.style.display = 'none';
+        }, 2000);
 
+        e.clearSelection(); // Clear the text selection
+    });
 
-
-@* <div style="position : absolute; top:50px;right:20px;padding:30px ">
-    @using (Html.BeginForm(FormMethod.Post))
-{
-
-    <div style="text-align:right">
-        <h2> Client 2 </h2>
-        <div>
-
-            <label>Text to Encrypt:</label>
-            @Html.TextBoxFor(m => m.RSAencryption.Text)
-        </div>
-        <div>
-            <label>Key(Public/Private):</label>
-            @Html.TextBoxFor(m => m.RSAencryption.PublicKey)
-        </div>
-        <br />
-        <input type="hidden" name="client" value="client2" />
-        <input class="btn btn-primary" type="submit" asp-controller="Encryption" asp-action="Rsaencrypt" value="Encrypt" />
-    </div>
-
-
-    <br />
-
-}
-    @using (Html.BeginForm(FormMethod.Post))
-{
-
-    <div style="text-align:right; height:initial">
-        <div>
-
-            <h4>Decrypt</h4>
-            @*  @Html.TextBoxFor(m => m.RSAdecryption.TextToDecrypt) *@
-
-
-@*  <div>
-                <label>Key(Public/Private):</label>
-                @Html.TextBoxFor(m => m.RSAdecryption.privateKey)
-            </div> *@
-@*        <input type="hidden" name="client" value="client2" />
-        <input class="btn btn-primary" type="submit" asp-controller="Encryption" asp-action="RsaDecrypt" value="Decrypt" />
-        <input class="btn btn-info" type="submit" asp-controller="Encryption" asp-action="SubmitPublicKey" value="Submit Key" />
-    </div>
-}
-    <br />
-    @if(Model.RSAdecryption!= null)
-{
- if(!string.IsNullOrWhiteSpace(Model.RSAdecryption.DecryptedText ) && Model.client =="client2" )
-{
-    <div style="text-align:right; height:auto">
-        <h4> Encrypted Text : </h4>
-        <p style="color:darkblue; text-align:right;width:auto"> @Model.RSAdecryption.EncryptedText</p>
-        <h4>Decrypted Text:</h4>
-        <p style="color:darkblue; text-align:right;width:auto"> @Model.RSAdecryption.DecryptedText</p>
-
-    </div>
-
-}
-
-
-}
-</div> *@
-
+    clipboard.on('error', function(e) {
+        console.error("Error copying text.");
+    });
+</script>
