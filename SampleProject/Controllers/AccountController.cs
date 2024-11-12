@@ -21,6 +21,7 @@ namespace SampleProject.Controllers
 
         public IActionResult Login()
         {
+
             return View();
         }
 
